@@ -5,6 +5,9 @@
   <div class="container">
     <hr />
     <h2>Categorias</h2>
+    <a class="btn btn-success" href="/admin/categories/new"
+      >Criar nova gategoria</a
+    >
     <hr />
     <table class="table table-bordered">
       <thead>
@@ -21,7 +24,12 @@
           <th><%= category.id %></th>
           <th><%= category.title %></th>
           <th><%= category.slug %></th>
-          <th>-</th>
+          <th>
+            <button class="btn btn-warning">Editar</button>
+            <form method="post" action="/categories/delete" style="display: inline;">              
+            <button class="btn btn-danger" value="<%= category.id %>" name="id">Deletar</button>
+          </form>
+          </th>
         </tr>
         <% }) %>
       </tbody>
