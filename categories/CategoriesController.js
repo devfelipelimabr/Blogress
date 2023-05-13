@@ -9,17 +9,23 @@ router.get("/admin/categories/new", (req, res) => {
 
 router.post("/categories/save", (req, res) => {
   const title = req.body.title;
-  if (title != undefined) {
+
+  if (title && title.trim() !== "") { // Verifica se o título não está vazio ou contém apenas espaços em branco
     Category.create({
       title: title,
       slug: slugify(title),
     }).then(() => {
       res.redirect("/admin/categories");
+    }).catch((error) => {
+      // Lida com erros na criação da categoria
+      console.error("Erro ao criar categoria: ", error);
+      res.redirect("/admin/categories/new");
     });
   } else {
-    res.redirect("admin/categories/new");
+    res.redirect("/admin/categories/new");
   }
 });
+
 
 router.get("/admin/categories", (req, res) => {
   Category.findAll().then((categories) => {
