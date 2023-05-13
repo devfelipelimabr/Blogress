@@ -1,0 +1,68 @@
+<%- include ("../../partials/head.ejs") %> <%- include
+("../../partials/navbar.ejs") %>
+
+<body>
+  <div class="container">
+    <hr />
+    <div class="card">
+      <div class="card-header">
+        <h2>Edição de artigo</h2>
+      </div>
+      <div class="card-body">
+        <form action="/articles/update" method="post">
+          <input type="hidden" name="id" value="<%= article.id %>" />
+          <input
+            class="form-control"
+            type="text"
+            name="title"
+            placeholder="Defina o título do artigo"
+            value="<%= article.title %>"
+          />
+          <br />
+          <textarea
+            class="form-control"
+            name="body"
+            placeholder="Escreva seu artigo aqui!"
+            id="article"
+          >
+<%= article.body %></textarea
+          >
+          <hr />
+          <label for="category">Categoria</label>
+          <select name="category" class="form-control">
+            <% categories.forEach((category)=>{ %>
+            <option value="<%= category.id %>"><%= category.title %></option>
+            <% }) %>
+          </select>
+          <br />
+          <button class="btn btn-success">Atualizar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+
+<%- include ("../../partials/footer.ejs") %>
+
+<script src="/tinymce/tinymce.min.js"></script>
+<script>
+  tinymce.init({
+    selector: "#article",
+    plugins: [
+      "advlist",
+      "autolink",
+      "link",
+      "image",
+      "lists",
+      "preview",
+      "searchreplace",
+      "wordcount",
+      "fullscreen",
+      "insertdatetime",
+      "media",
+      "save",
+      "table",
+      "emoticons",
+    ],
+  });
+</script>
