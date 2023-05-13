@@ -25,7 +25,11 @@
           <th><%= category.title %></th>
           <th><%= category.slug %></th>
           <th>
-            <button class="btn btn-warning">Editar</button>
+            <a
+              href="/admin/categories/edit/<%= category.id %>"
+              class="btn btn-warning"
+              >Editar</a
+            >
             <form
               id="deleteCategoy"
               method="post"
@@ -53,9 +57,8 @@
 
 <script>
   function confirmarDelecao() {
-    
     const decision = confirm(`Tem certeza que deseja deletar a categoria?`);
 
-    return decision
+    return decision;
   }
 </script>
