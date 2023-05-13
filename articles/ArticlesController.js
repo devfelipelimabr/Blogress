@@ -4,8 +4,12 @@ const router = express.Router();
 const Article = require("./Article");
 const Category = require("../categories/Category");
 
-router.get("/articles", (req, res) => {
-  res.send("ROTA DE ARTIGOS");
+router.get("/admin/articles", (req, res) => {
+  Article.findAll().then((articles) => {
+    res.render("admin/articles/index", {
+      articles: articles,
+    });
+  });
 });
 
 router.get("/admin/articles/new", (req, res) => {
