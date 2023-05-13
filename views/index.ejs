@@ -1,8 +1,31 @@
 <%- include ("./partials/head.ejs") %> <%- include
-("./partials/navbar.ejs") %>
+("./partials/homeNavbar.ejs") %>
 
 <body>
-    <h1>HOME</h1>
+    <div class="container">
+        <hr>
+        <div class="jumbotron">
+            <img id="logo" class="card-img-top" src="images/blogress.jpg" alt="Logo" style="width: 15rem; max-width: 100%;">
+            <hr>
+            <h1 class="display-4">Bem-vindo ao Blogress - Seu Portal de Tecnologia!</h1>
+            <p class="lead">Aqui no Blogress, estamos comprometidos em trazer as últimas novidades, tendências e insights em um mundo de constante evolução tecnológica.</p>
+            <hr class="my-4">
+            <p>Nosso objetivo é fornecer conteúdo de qualidade e informativo para mantê-lo atualizado sobre os avanços tecnológicos mais recentes.</p>
+            <a class="btn btn-primary btn-lg" href="/about" role="button">Leia mais</a>
+          </div>
+        <hr>
+        <% articles.forEach(article =>{ %>
+            <div class="card">
+                <div class="card-header">
+                    <h2><%= article.title %></h2>
+                </div>
+                <div class="card-body">
+                    <a href="#" class="btn btn-success">Ler artigo</a>
+                </div>
+            </div>
+            <br>
+            <% }) %>
+    </div>
 </body>
 
 <%- include ("./partials/footer.ejs") %>
