@@ -57,7 +57,7 @@ router.get("/admin/articles/edit/:id", (req, res) => {
   const id = req.params.id;
 
   if (isNaN(id)) {
-    res.redirect("/admin/articles");
+    return res.redirect("/admin/articles");
   }
 
   Article.findByPk(id)
