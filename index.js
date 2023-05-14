@@ -45,6 +45,25 @@ app.get("/about", (req, res) => {
   res.render("about");
 });
 
+app.get("/articles/:slug", (req, res) => {
+  const slug = req.params.slug;
+  Article.findOne({
+    where: {
+      slug: slug,
+    },
+  })
+    .then((article) => {
+      if (article != undefined) {
+        res.render("article", { article: article });
+      } else {
+        res.redirect("/");
+      }
+    })
+    .catch((err) => {
+      res.redirect("/");
+    });
+});
+
 app.listen(port, () => {
   console.log(`The server is connected on port - ${port}`);
 });
