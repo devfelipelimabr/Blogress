@@ -77,7 +77,7 @@ router.get("/admin/articles/edit/:id", (req, res) => {
         res.redirect("/admin/articles");
       }
     })
-    .catch((erro) => {
+    .catch((err) => {
       res.redirect("/admin/articles");
     });
 });
