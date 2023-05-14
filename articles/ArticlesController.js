@@ -64,9 +64,7 @@ router.get("/admin/articles/edit/:id", (req, res) => {
     .then((article) => {
       if (article != undefined) {
         Category.findAll({
-          order: [
-            ['title', 'ASC']
-          ]
+          order: [["title", "ASC"]],
         }).then((categories) => {
           res.render("admin/articles/edit", {
             article: article,
@@ -95,9 +93,13 @@ router.post("/articles/update", (req, res) => {
         id: id,
       },
     }
-  ).then(() => {
-    res.redirect("/admin/articles");
-  });
+  )
+    .then(() => {
+      res.redirect("/admin/articles");
+    })
+    .catch((err) => {
+      res.redirect("/admin/articles");
+    });
 });
 
 module.exports = router;
