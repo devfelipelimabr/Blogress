@@ -38,6 +38,7 @@ app.use("/", articlesController);
 app.get("/", (req, res) => {
   Article.findAll({
     order: [["id", "DESC"]],
+    limit: 5,
   }).then((articles) => {
     Category.findAll({
       order: [["title", "ASC"]],
@@ -49,8 +50,8 @@ app.get("/", (req, res) => {
 
 app.get("/about", (req, res) => {
   Category.findAll().then((categories) => {
-    res.render("about", {categories:categories});
-  });  
+    res.render("about", { categories: categories });
+  });
 });
 
 app.get("/articles/:slug", (req, res) => {

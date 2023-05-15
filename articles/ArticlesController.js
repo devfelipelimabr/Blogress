@@ -15,7 +15,9 @@ router.get("/admin/articles", (req, res) => {
 });
 
 router.get("/admin/articles/new", (req, res) => {
-  Category.findAll().then((categories) => {
+  Category.findAll({
+    order: [["title", "ASC"]],
+  }).then((categories) => {
     res.render("admin/articles/new", { categories: categories });
   });
 });
@@ -98,8 +100,56 @@ router.post("/articles/update", (req, res) => {
       res.redirect("/admin/articles");
     })
     .catch((err) => {
-      res.redirect("/admin/articles");
+      res.redirect("/");
     });
+});
+
+router.get("/articles/page/:num", (req, res) => {
+  let page = parseInt(req.params.num);
+  const limit = 5; // Número máximo de artigos por página
+  let offset = 0; // Número de "bypass" de artigos
+
+  if (isNaN(page) || page <= 1) {
+    offset = 0;
+    page = 1;
+  } else {
+    offset = (page - 1) * limit;
+  }
+
+  Article.findAndCountAll({
+    limit: limit,
+    offset: offset,
+    order: [["id", "DESC"]],
+  }).then((articles) => {
+    let next;
+    offset + limit >= articles.count ? (next = false) : (next = true);
+    let prev;
+    page <= 1 ? (prev = false) : (prev = true);
+
+    const result = {
+      page: page,
+      next: next,
+      prev: prev,
+      articles: articles,
+    };
+
+    Category.findAll({
+      order: [["title", "ASC"]],
+    })
+      .then((categories) => {
+        if (page == 1) {
+          res.redirect("/");
+        } else {
+          res.render("admin/articles/page", {
+            result: result,
+            categories: categories,
+          });
+        }
+      })
+      .catch((err) => {
+        res.redirect("/");
+      });
+  });
 });
 
 module.exports = router;
