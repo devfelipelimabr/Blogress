@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("./User");
+const bcrypt = require("bcryptjs");
 
 router.get("/admin/users/new", (req, res) => {
   res.render("admin/users/new");
@@ -11,10 +12,14 @@ router.post("/users/save", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
+  //Criptografia da senha do usuário
+  const salt = bcrypt.genSaltSync(10)
+  const hash = bcrypt.hashSync(password, salt)
+
   User.findOne({ where: { email: email } })
     .then((emailConfirm) => {
       if (emailConfirm === null) {
-        User.create({ fullName: fullName, email: email, password: password })
+        User.create({ fullName: fullName, email: email, password: hash })
           .then(() => {
             res.redirect("/admin/users");
           })
@@ -83,10 +88,14 @@ router.post("/users/update", (req, res) => {
   const email = req.body.email;
   const password = req.body.password;
 
+   //Criptografia da senha do usuário
+   const salt = bcrypt.genSaltSync(10)
+   const hash = bcrypt.hashSync(password, salt)
+
   User.findOne({ where: { email: email } })
     .then((emailConfirm) => {
       if (emailConfirm === null) {
-        User.create({ fullName: fullName, email: email, password: password })
+        User.create({ fullName: fullName, email: email, password: hash })
           .then(() => {
             res.redirect("/admin/users");
           })
