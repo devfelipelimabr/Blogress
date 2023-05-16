@@ -4,42 +4,41 @@
 <body>
   <div class="container">
     <hr />
-    <h2>Categorias</h2>
-    <a class="btn btn-success" href="/admin/categories/new"
-      >Criar nova categoria</a
+    <h2>Usuários</h2>
+    <a class="btn btn-success" href="/admin/users/new"
+      >Criar novo usuário</a
     >
     <hr />
     <table class="table table-bordered">
       <thead>
         <tr>
           <th>Id</th>
-          <th>Título</th>
-          <th>Slug</th>
-          <th>Ações</th>
+          <th>Nome</th>
+          <th>email</th>          
         </tr>
       </thead>
       <tbody>
-        <% categories.forEach(category =>{ %>
+        <% users.forEach(user =>{ %>
         <tr>
-          <td><%= category.id %></td>
-          <td><%= category.title %></td>
-          <td><%= category.slug %></td>
+          <td><%= user.id %></td>
+          <td><%= user.fullName %></td>
+          <td><%= user.email %></td>
           <td>
             <a
-              href="/admin/categories/edit/<%= category.id %>"
+              href="/admin/users/edit/<%= user.id %>"
               class="btn btn-warning"
               >Editar</a
             >
             <form
               id="deleteCategoy"
               method="post"
-              action="/categories/delete"
+              action="/users/delete"
               style="display: inline"
               onsubmit="return confirmarDelecao()"
             >
               <button
                 class="btn btn-danger"
-                value="<%= category.id %>"
+                value="<%= user.id %>"
                 name="id"
               >
                 Deletar
@@ -57,7 +56,7 @@
 
 <script>
   function confirmarDelecao() {
-    const decision = confirm(`Tem certeza que deseja deletar a categoria?`);
+    const decision = confirm(`Tem certeza que deseja deletar o usuário?`);
 
     return decision;
   }
