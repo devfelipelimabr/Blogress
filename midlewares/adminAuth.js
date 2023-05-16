@@ -3,7 +3,7 @@ function adminAuth(req, res, next) {
     next();
   } else {
     return res.send(
-      '<script>alert("Usuário deslogado"); window.location.href = "/login";</script>'
+      '<script>alert("Usuário deslogado. Faça login para ter acesso a este recurso."); window.location.href = "/login";</script>'
     );
   }
 }

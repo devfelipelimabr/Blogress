@@ -84,12 +84,7 @@ router.get("/admin/users/edit/:id", adminAuth, (req, res) => {
     });
 });
 
-router.post("/users/update", adminAuth, (req, res) => {
-  if(req.session.user === undefined){
-    return  res.send(
-        '<script>alert("Usuário deslogado"); window.location.href = "/login";</script>'
-      );
-  }
+router.post("/users/update", adminAuth, (req, res) => {  
   const fullName = req.body.fullName;
   const email = req.body.email;
   const password = req.body.password;
@@ -150,5 +145,12 @@ router.post("/auth", (req, res) => {
     }
   });
 });
+
+router.get("/logout",(req,res)=>{
+  req.session.user = undefined;
+  res.send(
+    '<script>alert("Usuário deslogado com sucesso!"); window.location.href = "/";</script>'
+  );
+})
 
 module.exports = router;
