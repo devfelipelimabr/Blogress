@@ -1,3 +1,4 @@
+const SensitiveData = require("./SensitiveData")
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -6,9 +7,12 @@ const session = require("express-session");
 const port = 8080;
 
 //Sessions
-app.use(session({
-  secret: "afsl3327", cookie: {maxAge: 30000}//Tempo em milisegundos
-}))
+app.use(
+  session({
+    secret: SensitiveData.session.secret,
+    cookie: { maxAge: 30000 }, //Tempo em milisegundos
+  })
+);
 
 //Controllers
 const categoriesController = require("./categories/CategoriesController");
@@ -45,7 +49,6 @@ app.use("/", articlesController);
 app.use("/", userController);
 
 //Rotas
-
 
 app.get("/", (req, res) => {
   Article.findAll({

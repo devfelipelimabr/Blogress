@@ -1,8 +1,14 @@
 const Sequelize = require("sequelize");
-const connection = new Sequelize("blogress", "root", "128145", {
-  host: "localhost",
-  dialect: "mysql",
-  timezone: "-03:00"
-});
+const SensitiveData = require("../SensitiveData");
+const connection = new Sequelize(
+  "blogress",
+  SensitiveData.database.user,
+  SensitiveData.database.password,
+  {
+    host: "localhost",
+    dialect: "mysql",
+    timezone: "-03:00",
+  }
+);
 
 module.exports = connection;
