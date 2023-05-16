@@ -2,19 +2,20 @@ const express = require("express");
 const router = express.Router();
 const User = require("./User");
 const bcrypt = require("bcryptjs");
+const adminAuth = require("../midlewares/adminAuth")
 
-router.get("/admin/users/new", (req, res) => {
+router.get("/admin/users/new", adminAuth, (req, res) => {  
   res.render("admin/users/new");
 });
 
-router.post("/users/save", (req, res) => {
+router.post("/users/save", adminAuth, (req, res) => {
   const fullName = req.body.fullName;
   const email = req.body.email;
   const password = req.body.password;
 
   //Criptografia da senha do usuário
-  const salt = bcrypt.genSaltSync(10)
-  const hash = bcrypt.hashSync(password, salt)
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
 
   User.findOne({ where: { email: email } })
     .then((emailConfirm) => {
@@ -40,7 +41,7 @@ router.post("/users/save", (req, res) => {
     });
 });
 
-router.get("/admin/users", (req, res) => {
+router.get("/admin/users", adminAuth, (req, res) => {
   User.findAll().then((users) => {
     res.render("admin/users/index", {
       users: users,
@@ -48,7 +49,7 @@ router.get("/admin/users", (req, res) => {
   });
 });
 
-router.post("/users/delete", (req, res) => {
+router.post("/users/delete", adminAuth, (req, res) => {
   const id = req.body.id;
   if (id != undefined && id != isNaN) {
     User.destroy({
@@ -63,7 +64,7 @@ router.post("/users/delete", (req, res) => {
   }
 });
 
-router.get("/admin/users/edit/:id", (req, res) => {
+router.get("/admin/users/edit/:id", adminAuth, (req, res) => {
   const id = req.params.id;
 
   if (isNaN(id)) {
@@ -83,14 +84,19 @@ router.get("/admin/users/edit/:id", (req, res) => {
     });
 });
 
-router.post("/users/update", (req, res) => {
+router.post("/users/update", adminAuth, (req, res) => {
+  if(req.session.user === undefined){
+    return  res.send(
+        '<script>alert("Usuário deslogado"); window.location.href = "/login";</script>'
+      );
+  }
   const fullName = req.body.fullName;
   const email = req.body.email;
   const password = req.body.password;
 
-   //Criptografia da senha do usuário
-   const salt = bcrypt.genSaltSync(10)
-   const hash = bcrypt.hashSync(password, salt)
+  //Criptografia da senha do usuário
+  const salt = bcrypt.genSaltSync(10);
+  const hash = bcrypt.hashSync(password, salt);
 
   User.findOne({ where: { email: email } })
     .then((emailConfirm) => {
@@ -114,6 +120,35 @@ router.post("/users/update", (req, res) => {
       console.error("Erro ao buscar email: ", err);
       res.redirect("/admin/users/new");
     });
+});
+
+router.get("/login", (req, res) => {
+  res.render("admin/users/login");
+});
+
+router.post("/auth", (req, res) => {
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User.findOne({ where: { email: email } }).then((user) => {
+    if (user !== null) {
+      //Verifica se existe este email de usuaro no BD
+      bcrypt.compare(password, user.password, (err, correct) => {
+        if (correct) {
+          //Inicia sessão
+          req.session.user = {
+            id: user.id,
+            email: user.email,
+          };
+          res.json(req.session.user);
+        } 
+      });
+    }else {
+      res.send(
+        '<script>alert("Usuário ou senha incorretos"); window.location.href = "/login";</script>'
+      );
+    }
+  });
 });
 
 module.exports = router;

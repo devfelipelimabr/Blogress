@@ -2,7 +2,13 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const connection = require("./database/database");
+const session = require("express-session");
 const port = 8080;
+
+//Sessions
+app.use(session({
+  secret: "afsl3327", cookie: {maxAge: 30000}//Tempo em milisegundos
+}))
 
 //Controllers
 const categoriesController = require("./categories/CategoriesController");
@@ -37,6 +43,9 @@ connection
 app.use("/", categoriesController);
 app.use("/", articlesController);
 app.use("/", userController);
+
+//Rotas
+
 
 app.get("/", (req, res) => {
   Article.findAll({
