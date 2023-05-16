@@ -1,5 +1,5 @@
 const Sequelize = require("sequelize");
-const SensitiveData = require("../SensitiveData");
+const SensitiveData = require("../SensitiveData/SensitiveData");
 const connection = new Sequelize(
   "blogress",
   SensitiveData.database.user,

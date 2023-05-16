@@ -1,4 +1,4 @@
-const SensitiveData = require("./SensitiveData")
+const SensitiveData = require("./SensitiveData/SensitiveData");
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
