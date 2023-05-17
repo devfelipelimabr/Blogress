@@ -6,118 +6,120 @@ const connection = require("./database/database");
 const session = require("express-session");
 const port = 8080;
 
-//Sessions
+// Configuração das sessões
 app.use(
   session({
     secret: SensitiveData.session.secret,
-    cookie: { maxAge: 3000000 }, //Tempo em milisegundos
+    cookie: { maxAge: 3000000 }, // Tempo em milissegundos
   })
 );
 
-//Controllers
+// Importação dos controllers
 const categoriesController = require("./categories/CategoriesController");
 const articlesController = require("./articles/ArticlesController");
 const userController = require("./users/UserController");
 
-//Models
+// Importação dos modelos
 const Article = require("./articles/Article");
 const Category = require("./categories/Category");
 const User = require("./users/User");
 
-//View engine
+// Configuração do mecanismo de visualização
 app.set("view engine", "ejs");
 
-//Static
+// Servir arquivos estáticos
 app.use(express.static("public"));
 
-//Body parser
+// Configuração do body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-//Database
+// Autenticação com o banco de dados
 connection
   .authenticate()
   .then(() => {
-    console.log(`Database connection sucess!`);
+    console.log("Database connection successful!");
   })
-  .catch(() => {
+  .catch((error) => {
     console.log(error);
   });
 
+// Uso dos controllers
 app.use("/", categoriesController);
 app.use("/", articlesController);
 app.use("/", userController);
 
-//Rotas
+// Rotas
 
-app.get("/", (req, res) => {
-  Article.findAll({
-    order: [["id", "DESC"]],
-    limit: 5,
-  }).then((articles) => {
-    Category.findAll({
+app.get("/", async (req, res) => {
+  try {
+    const articles = await Article.findAll({
+      order: [["id", "DESC"]],
+      limit: 5,
+    });
+    const categories = await Category.findAll({
       order: [["title", "ASC"]],
-    }).then((categories) => {
-      res.render("index", { articles: articles, categories: categories });
     });
-  });
+    res.render("index", { articles, categories });
+  } catch (error) {
+    res.redirect("/");
+  }
 });
 
-app.get("/about", (req, res) => {
-  Category.findAll().then((categories) => {
-    res.render("about", { categories: categories });
-  });
+app.get("/about", async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    res.render("about", { categories });
+  } catch (error) {
+    res.redirect("/");
+  }
 });
 
-app.get("/articles/:slug", (req, res) => {
+app.get("/articles/:slug", async (req, res) => {
   const slug = req.params.slug;
-  Article.findOne({
-    where: {
-      slug: slug,
-    },
-  })
-    .then((article) => {
-      if (article != undefined) {
-        Category.findAll({
-          order: [["title", "ASC"]],
-        }).then((categories) => {
-          res.render("article", { article: article, categories: categories });
-        });
-      } else {
-        res.redirect("/");
-      }
-    })
-    .catch((err) => {
-      res.redirect("/");
+  try {
+    const article = await Article.findOne({
+      where: {
+        slug: slug,
+      },
     });
+    if (article != undefined) {
+      const categories = await Category.findAll({
+        order: [["title", "ASC"]],
+      });
+      res.render("article", { article, categories });
+    } else {
+      res.redirect("/");
+    }
+  } catch (error) {
+    res.redirect("/");
+  }
 });
 
-app.get("/category/:slug", (req, res) => {
+app.get("/category/:slug", async (req, res) => {
   const slug = req.params.slug;
-  Category.findOne({
-    where: {
-      slug: slug,
-    },
-    include: [{ model: Article }],
-  })
-    .then((category) => {
-      if (category != undefined) {
-        Category.findAll({
-          order: [["title", "ASC"]],
-        }).then((categories) => {
-          res.render("index", {
-            articles: category.articles,
-            category: category,
-            categories: categories,
-          });
-        });
-      } else {
-        res.redirect("/");
-      }
-    })
-    .catch((err) => {
-      res.redirect("/");
+  try {
+    const category = await Category.findOne({
+      where: {
+        slug: slug,
+      },
+      include: [{ model: Article }],
     });
+    if (category != undefined) {
+      const categories = await Category.findAll({
+        order: [["title", "ASC"]],
+      });
+      res.render("index", {
+        articles: category.articles,
+        category,
+        categories,
+      });
+    } else {
+      res.redirect("/");
+    }
+  } catch (error) {
+    res.redirect("/");
+  }
 });
 
 app.listen(port, () => {
